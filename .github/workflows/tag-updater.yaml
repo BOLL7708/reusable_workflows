@@ -1,8 +1,9 @@
 name: Move Use Tag
 
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - 'main'
 
 permissions:
   contents: write
@@ -19,5 +20,5 @@ jobs:
         TAG="use"
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git tag -fa "${TAG}" -m 'Move use tag'
+        git tag -fa "${TAG}" -m 'Moved by action'
         git push origin "${TAG}" --force
