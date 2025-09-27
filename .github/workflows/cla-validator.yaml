@@ -3,12 +3,12 @@ name: CLA Validation
 on:
   workflow_call:
     secrets:
-      TOKEN:
+      REMOTE_TOKEN:
         required: true
 
 permissions:
+  contents: read
   pull-requests: write
-  issues: write
 
 jobs:
   validate-cla:
@@ -22,6 +22,7 @@ jobs:
         shell: pwsh
         env:
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
+          GITHUB_TOKEN: ${{ secrets.REMOTE_TOKEN }}
         run: |
           $selector = Select-String -Path CLA.md -Pattern "- $Env:AUTHOR_LOGIN"
 
@@ -42,8 +43,8 @@ jobs:
         env:
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          GITHUB_TOKEN: ${{ secrets.REMOTE_TOKEN }}
         with:
-          github-token: ${{ secrets.TOKEN }}
           script: |
             const authorLogin = process.env.AUTHOR_LOGIN;
             const defaultBranch = process.env.DEFAULT_BRANCH;
@@ -81,6 +82,8 @@ jobs:
       - name: Remove label if CLA is signed
         if: steps.validate-cla.outputs.in_cla == 'true'
         uses: actions/github-script@v8
+        env:
+          GITHUB_TOKEN: ${{ secrets.REMOTE_TOKEN }}
         with:
           script: |
             const { owner, repo } = context.repo;
