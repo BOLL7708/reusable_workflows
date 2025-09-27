@@ -38,6 +38,7 @@ jobs:
         if: steps.validate-cla.outputs.in_cla == 'false'
         uses: actions/github-script@v8
         env:
+          GH_TOKEN: ${{ token }}
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         with:
