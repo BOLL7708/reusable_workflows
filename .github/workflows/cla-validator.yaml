@@ -5,8 +5,10 @@ on:
     secrets:
       TOKEN:
         required: true
+
 permissions:
   pull-requests: write
+  issues: write
 
 jobs:
   validate-cla:
