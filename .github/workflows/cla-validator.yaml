@@ -45,6 +45,7 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           GITHUB_TOKEN: ${{ secrets.REMOTE_TOKEN }}
         with:
+          github-token: ${{ secrets.REMOTE_TOKEN }}
           script: |
             const authorLogin = process.env.AUTHOR_LOGIN;
             const defaultBranch = process.env.DEFAULT_BRANCH;
@@ -62,14 +63,14 @@ jobs:
 
             // Only comment if it hasn't already labeled the PR
             if (!hasLabel) {
-              github.rest.issues.createComment({
+              await github.rest.issues.createComment({
                 issue_number: issue_number,
                 owner: owner,
                 repo: repo,
                 body: `⚠️ Pull requests will only be accepted if the [CLA](../blob/${defaultBranch}/CLA.md) has been signed.\n\nIt appears that you have not yet signed the [CLA](../blob/${defaultBranch}/CLA.md) with your GitHub username. In order to contribute to this project, you must read the CLA fully, and then append the following to the bottom of the document to sign it.\n\n\`\`\`\n- ${authorLogin}\n\n\`\`\``
               });
 
-              github.rest.issues.addLabels({
+              await github.rest.issues.addLabels({
                 owner: owner,
                 repo: repo,
                 issue_number: issue_number,
@@ -85,6 +86,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REMOTE_TOKEN }}
         with:
+          github-token: ${{ secrets.REMOTE_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
@@ -98,7 +100,7 @@ jobs:
             const hasLabel = labels.some(label => label.name === 'cla-not-signed');
 
             if (hasLabel) {
-              github.rest.issues.removeLabel({
+              await github.rest.issues.removeLabel({
                 owner: owner,
                 repo: repo,
                 issue_number: issue_number,
