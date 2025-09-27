@@ -3,7 +3,7 @@ name: CLA Validation
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      token:
         required: true
 permissions:
   pull-requests: write
