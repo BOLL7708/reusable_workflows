@@ -3,7 +3,7 @@ name: CLA Validation
 on:
   workflow_call:
     secrets:
-      token:
+      TOKEN:
         required: true
 permissions:
   pull-requests: write
@@ -38,10 +38,10 @@ jobs:
         if: steps.validate-cla.outputs.in_cla == 'false'
         uses: actions/github-script@v8
         env:
-          GH_TOKEN: ${{ secrets.token }}
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         with:
+          github-token: ${{ secrets.TOKEN }}
           script: |
             const authorLogin = process.env.AUTHOR_LOGIN;
             const defaultBranch = process.env.DEFAULT_BRANCH;
