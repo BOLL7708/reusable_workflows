@@ -2,9 +2,6 @@ name: CLA Validation
 
 on:
   workflow_call:
-    secrets:
-      REMOTE_TOKEN:
-        required: true
 
 permissions:
   contents: read
@@ -23,7 +20,7 @@ jobs:
         shell: pwsh
         env:
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
-          GITHUB_TOKEN: ${{ secrets.REMOTE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $selector = Select-String -Path CLA.md -Pattern "- $Env:AUTHOR_LOGIN"
 
@@ -42,7 +39,7 @@ jobs:
         if: steps.validate-cla.outputs.in_cla == 'false'
         uses: actions/github-script@v8
         with:
-          github-token: ${{ secrets.REMOTE_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const authorLogin = process.env.AUTHOR_LOGIN;
             const defaultBranch = process.env.DEFAULT_BRANCH;
@@ -75,11 +72,8 @@ jobs:
         if: steps.validate-cla.outputs.in_cla == 'true'
         uses: actions/github-script@v8
         with:
-          github-token: ${{ secrets.REMOTE_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: me } = await github.rest.users.getAuthenticated();
-            core.info(`Authenticated as: ${me.login}`);
-
             const { owner, repo } = context.repo;
             const issue_number = context.payload.pull_request.number;
 
